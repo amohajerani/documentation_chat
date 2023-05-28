@@ -1,0 +1,8 @@
+.env
+uploads/
+*.pyc
+__pycache__/
+db/
+downloaded_website/
+synapse_db
+.DS_Store

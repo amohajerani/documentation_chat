@@ -1,0 +1,4 @@
+langchain
+unstructured
+beautifulsoup4
+Chroma
