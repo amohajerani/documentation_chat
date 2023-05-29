@@ -1,7 +1,0 @@
-.env
-uploads/
-*.pyc
-__pycache__/
-db/
-downloaded_website/
-.DS_Store
