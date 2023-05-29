@@ -17,4 +17,4 @@ def get_answer():
     return jsonify(answer=answer, references=references)
 
 if __name__ == "__main__":
-    app.run(port=8001, debug=True)
+    app.run(port=8000, debug=True)
