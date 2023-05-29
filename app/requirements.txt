@@ -6,3 +6,4 @@ Chroma
 flask
 python-dotenv
 openai
+chromadb
