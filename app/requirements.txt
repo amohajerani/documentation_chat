@@ -4,3 +4,4 @@ unstructured
 beautifulsoup4
 Chroma
 flask
+python-dotenv
