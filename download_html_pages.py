@@ -1,6 +1,8 @@
 import requests
 import os
 from urllib.parse import urlparse, urljoin
+import csv
+
 
 def download_page(url):
     response = requests.get(url)
@@ -28,14 +30,14 @@ def download_website(url, output_dir):
     parsed_url = urlparse(url)
     base_url = parsed_url.scheme + '://' + parsed_url.netloc
     links = extract_links(homepage_content, base_url)
-    import pdb; pdb.set_trace()
     # Download linked pages recursively
     for link in links:
         absolute_url = urljoin(base_url, link)
-        page_content = download_page(absolute_url)
-        filename = get_filename_from_url(link)
-        save_page(page_content, os.path.join(output_dir, filename))
-        url_to_file[absolute_url] = filename
+        if absolute_url.startswith('https://docs.synapsefi.com'):
+            page_content = download_page(absolute_url)
+            filename = get_filename_from_url(link)
+            save_page(page_content, os.path.join(output_dir, filename))
+            url_to_file[absolute_url] = filename
 
     return url_to_file
 
@@ -54,20 +56,24 @@ def extract_links(html, base_url):
             links.append(absolute_url)
 
     return links
-
+i=0
 def get_filename_from_url(url):
-    parsed_url = urlparse(url)
-    path = parsed_url.path
-    filename = os.path.basename(path)
-    if not filename or filename == '/':
-        filename = 'index.html'
+    global i
+    filename='doc'+str(i)+'.html'
+    i+=1
     return filename
 
 # Example usage
 website_url = 'https://docs.synapsefi.com'
 output_directory = 'downloaded_website'
 
-#url_to_file_mapping = download_website(website_url, output_directory)
-#for url, file_name in url_to_file_mapping.items():
-#    print(f"URL: {url}\tFile: {file_name}")
+url_to_file_mapping = download_website(website_url, output_directory)
+# Open the CSV file in write mode
+with open('map.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['File', 'URL'])  # Write the header row
+
+    # Iterate over the dictionary and write each URL and file name as a row
+    for url, file_name in url_to_file_mapping.items():
+        writer.writerow([file_name, url])
 
