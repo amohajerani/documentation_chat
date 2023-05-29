@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synapse Insight</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #3F51B5;
+            text-align: center;
+            padding-top: 20px;
+        }
+        #searchSection {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        #searchbar {
+            width: 400px;
+            height: 30px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+        button {
+            height: 42px;
+            margin-left: 10px;
+            background-color: #3F51B5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #answer, #references {
+            margin: 50px auto;
+            width: 60%;
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+        #referencesList {
+            list-style: none;
+            padding: 0;
+        }
+        a {
+            text-decoration: none;
+            color: #3F51B5;
+        }
+        .content {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Synapse Insight</h1>
+    <div class="content">
+    <div id="exampleQuestions" style="text-align: center; margin: 20px;">
+
+        <p>What is moderate risk tolerance?</p>
+        <p>What is the agenda for the kickoff calls?</p>
+        <p>how long does it take to go live?</p>
+    </div>
+    <div id="searchSection">
+        <input type="text" id="searchbar" placeholder="Search Synapse's documentation here...">
+        <button onclick="sendSearchQuery()">Search</button>
+    </div>
+    <div id="answer">
+        <h2>Answer</h2>
+        <p id="answerText"></p>
+    </div>
+    <div id="references">
+        <h2>References</h2>
+        <ul id="referencesList"></ul>
+    </div>
+</div>
+    <script>
+        function sendSearchQuery() {
+            const searchQuery = document.getElementById('searchbar').value;
+            fetch('/get-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: searchQuery })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('answerText').textContent = data.answer;
+                const refList = document.getElementById('referencesList');
+                refList.innerHTML = '';
+                data.references.forEach(ref => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = ref;
+                    a.textContent = ref;
+                    a.target = "_blank"; // open in new tab
+                    li.appendChild(a);
+                    refList.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+</body>
+</html>
+

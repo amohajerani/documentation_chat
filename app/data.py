@@ -66,19 +66,14 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 llm = OpenAI(temperature=0, openai_api_key=os.environ["OPENAI_API_KEY"])
 chain = load_qa_chain(llm, chain_type="stuff")
-while True:
-    print('----------------------------------')
-    query = input('your question please: ')
+
+def get_answer(query):
     results = vectordb.similarity_search(query)
     answer = chain.run(input_documents=results[:3], question=query)
-    # find the links for each result
-    print('answer:')
-    print(answer)
-    print('\nReferences')
     urls = []
     for result in results:
         file_name=result.metadata['source'].replace('./downloaded_website/','')
         url = find_url_by_file('./map.csv', file_name+'.html')
         if url not in urls and url:
             urls.append(url)
-    [print(url) for url in urls]
+    return answer, urls
