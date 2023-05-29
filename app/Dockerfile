@@ -1,6 +1,7 @@
 FROM python:3.11
 WORKDIR /app
 ADD . /app
+ENV HNSWLIB_NO_NATIVE=1
 #ADD ./.aws/credentials /root/.aws/credentials
 #RUN apt-get update && apt-get install -y supervisor
 RUN pip install --upgrade pip
