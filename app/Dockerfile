@@ -4,6 +4,8 @@ ADD . /app
 ENV HNSWLIB_NO_NATIVE=1
 #ADD ./.aws/credentials /root/.aws/credentials
 #RUN apt-get update && apt-get install -y supervisor
+RUN apt-get update
+
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 #COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
