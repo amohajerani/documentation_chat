@@ -1,8 +1,7 @@
-chromadb
+faiss-cpu
 langchain
 unstructured
 beautifulsoup4
-Chroma
 flask
 python-dotenv
 openai

@@ -1,8 +1,7 @@
 from langchain.document_loaders import BSHTMLLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-import pdb
+from langchain.vectorstores import FAISS
 from dotenv import find_dotenv, load_dotenv
 import os
 
@@ -23,8 +22,8 @@ def create_docs(html_link):
     # chunk the doc
     text_splitter = RecursiveCharacterTextSplitter(
         # Set a really small chunk size, just to show.
-        chunk_size = 800,
-        chunk_overlap  = 80,
+        chunk_size = 1000,
+        chunk_overlap  = 100,
         length_function = len,
     )
     splitted_docs =  text_splitter.split_documents(data)
@@ -44,14 +43,14 @@ def embed_corpus(file_list):
         file_docs = create_docs(os.path.join(file_directory, file_name))
         docs.extend(file_docs)
         print('len(docs): ', len(docs))
-    vectordb = Chroma.from_documents(docs, embeddings, persist_directory=persist_directory)
-    vectordb.persist()
+    vectordb = FAISS.from_documents(docs, embeddings)
+    vectordb.save_local("faiss_index")
     vectordb = None
 
 # Uncomment the line below to re-generate the vector db.
 # embed_corpus(file_list)
 # Now we can load the persisted database from disk, and use it as normal. 
-vectordb = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+vectordb = FAISS.load_local("faiss_index", embeddings)
 
 import csv
 def find_url_by_file(csv_file, file_name):
@@ -73,7 +72,7 @@ def get_answer(query):
     urls = []
     for result in results:
         file_name=result.metadata['source'].replace('./downloaded_website/','')
-        url = find_url_by_file('./map.csv', file_name+'.html')
+        url = find_url_by_file('./map.csv', file_name)
         if url not in urls and url:
             urls.append(url)
     return answer, urls
